@@ -26,6 +26,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 
 public class HttpUtil {
@@ -79,6 +81,12 @@ public class HttpUtil {
         String method = request.method.toUpperCase();
 
         connection = (HttpsURLConnection) url.openConnection();
+        connection.setHostnameVerifier(new HostnameVerifier() {
+            public boolean verify(String hostname, SSLSession sslSession) {
+                return true;
+            }
+        });
+
         if (request.certFilenames != null) {
             connection.setSSLSocketFactory(KeyPinStoreUtil.getInstance(request.certFilenames).getContext().getSocketFactory());
         }
